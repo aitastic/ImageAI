@@ -1,5 +1,6 @@
 import os
 import re
+from textwrap import indent
 import numpy as np
 import json
 from imageai.Detection.Custom.voc import parse_voc_annotation
@@ -667,7 +668,7 @@ class CustomObjectDetection:
 
     def detectObjectsFromImage(self, input_image="", output_image_path="", input_type="file", output_type="file",
                                extract_detected_objects=False, minimum_percentage_probability=50, nms_treshold=0.4,
-                               display_percentage_probability=True, display_object_name=True, thread_safe=False):
+                               display_percentage_probability=True, display_object_name=True, thread_safe=False,max_score_only:bool=False):
 
         """
 
@@ -808,6 +809,19 @@ class CustomObjectDetection:
 
                 all_boxes, all_labels, all_scores = self.__detection_utils.get_boxes(boxes, self.__model_labels,
                                                                                      self.__object_threshold)
+
+                # only keep one label per box
+                if max_score_only:
+                    unique_labeled_boxes, unique_labels, unique_labelel_scores = list(), list(), list()
+                    for box in set(list(all_boxes)):
+                        indices = [i for i, x in enumerate(all_boxes) if x == box]
+                        score_candidates = [(s,i) for i,s in enumerate(all_scores) if i in indices]
+                        max_index = max(score_candidates)[1]  
+                        unique_labeled_boxes.append(box)
+                        unique_labels.append(all_labels[max_index])
+                        unique_labelel_scores.append(all_scores[max_index])  
+
+                    all_boxes, all_labels, all_scores = unique_labeled_boxes, unique_labels, unique_labelel_scores                                                         
 
                 for object_box, object_label, object_score in zip(all_boxes, all_labels, all_scores):
                     each_object_details = dict()
