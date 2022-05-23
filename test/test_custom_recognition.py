@@ -4,7 +4,7 @@ from os.path import dirname
 import os
 
 
-main_folder = os.path.join(os.getcwd(),"ImageAI","test")
+main_folder = os.path.join(os.getcwd(),"src","ImageAI","test")
 
 all_images = os.listdir(os.path.join(main_folder, "data-images"))
 all_images_array = []
