@@ -3,15 +3,15 @@ import re
 from textwrap import indent
 import numpy as np
 import json
-from imageai.Detection.Custom.voc import parse_voc_annotation
-from imageai.Detection.YOLO.yolov3 import yolov3_main, yolov3_train, dummy_loss
-from imageai.Detection.Custom.generator import BatchGenerator
-from imageai.Detection.Custom.utils.utils import normalize, evaluate, makedirs
+from ImageAI.imageai.Detection.Custom.voc import parse_voc_annotation
+from ImageAI.imageai.Detection.YOLO.yolov3 import yolov3_main, yolov3_train, dummy_loss
+from ImageAI.imageai.Detection.Custom.generator import BatchGenerator
+from ImageAI.imageai.Detection.Custom.utils.utils import normalize, evaluate, makedirs
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 from tensorflow.keras.optimizers import Adam
-from imageai.Detection.Custom.callbacks import CustomModelCheckpoint
-from imageai.Detection.Custom.utils.multi_gpu_model import multi_gpu_model
-from imageai.Detection.Custom.gen_anchors import generateAnchors
+from ImageAI.imageai.Detection.Custom.callbacks import CustomModelCheckpoint
+from ImageAI.imageai.Detection.Custom.utils.multi_gpu_model import multi_gpu_model
+from ImageAI.imageai.Detection.Custom.gen_anchors import generateAnchors
 import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras import Input
@@ -419,7 +419,7 @@ class DetectionModelTrainer:
                     #   Run the evaluation
                     ###############################
                     # compute mAP for all the classes
-                    average_precisions = evaluate(infer_model, valid_generator, iou_threshold=iou_threshold,
+                    average_precisions, all_precisions, all_recalls, all_scores = evaluate(infer_model, valid_generator, iou_threshold=iou_threshold,
                                                   obj_thresh=object_threshold, nms_thresh=nms_threshold)
 
                     result_dict = {
@@ -452,7 +452,7 @@ class DetectionModelTrainer:
             else:
                 print('skipping the evaluation of {} since it\'s not a .h5 file'.format(model_file))
 
-        return results
+        return results, all_precisions, all_recalls, all_scores
 
     def _create_training_instances(self,
             train_annot_folder,

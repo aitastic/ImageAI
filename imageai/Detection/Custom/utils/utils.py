@@ -75,7 +75,7 @@ def evaluate(model,
 
     # compute mAP by comparing all detections and all annotations
     average_precisions = {}
-    
+    all_precisions, all_recalls, all_scores = list(), list(), list()
     for label in range(generator.num_classes()):
         false_positives = np.zeros((0,))
         true_positives  = np.zeros((0,))
@@ -130,7 +130,11 @@ def evaluate(model,
         average_precision  = compute_ap(recall, precision)  
         average_precisions[label] = average_precision
 
-    return average_precisions    
+        all_precisions.append(precision)
+        all_recalls.append(recall)
+        all_scores.append(sorted(scores,reverse=True))
+
+    return average_precisions, all_precisions, all_recalls, all_scores
 
 
 def correct_yolo_boxes(boxes, image_h, image_w, net_h, net_w):
