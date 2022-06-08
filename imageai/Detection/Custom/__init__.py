@@ -318,7 +318,7 @@ class DetectionModelTrainer:
             max_queue_size=8
         )
 
-    def evaluateModel(self, model_path, json_path, batch_size=4, iou_threshold=0.5, object_threshold=0.2, nms_threshold=0.45):
+    def evaluateModel(self, model_path, json_path, batch_size=4, iou_threshold=0.5, object_threshold=0.2, nms_threshold=0.45,img_h=416,img_w=416):
         """
 
         'evaluateModel()' is used to obtain the mAP metrics for your model(s). It accepts the following values:
@@ -420,7 +420,7 @@ class DetectionModelTrainer:
                     ###############################
                     # compute mAP for all the classes
                     average_precisions, all_precisions, all_recalls, all_scores = evaluate(infer_model, valid_generator, iou_threshold=iou_threshold,
-                                                  obj_thresh=object_threshold, nms_thresh=nms_threshold)
+                                                  obj_thresh=object_threshold, nms_thresh=nms_threshold,net_h=img_h,net_w=img_w)
 
                     result_dict = {
                         'model_file': model_file,
@@ -622,6 +622,9 @@ class CustomObjectDetection:
         self.__nms_threshold = 0.4
         self.__model = None
         self.__detection_utils = CustomDetectionUtils(labels=[])
+
+    def set_input_size(self,size):
+        self.__input_size = size
 
     def setModelTypeAsYOLOv3(self):
         """
