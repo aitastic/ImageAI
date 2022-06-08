@@ -36,6 +36,7 @@ class DetectionModelTrainer:
 
         self.__model_min_input_size = 288
         self.__model_max_input_size = 448
+        self.__size = 416
         self.__model_anchors = []
         self.__inference_anchors = []
         self.__json_directory = ""
@@ -67,6 +68,13 @@ class DetectionModelTrainer:
         self.__validation_annotations_folder = ""
         self.__validation_cache_file = ""
         self.__validation_times = 1
+
+    def set_size(self,size:int=416)->None:
+        self.__size = size
+
+    def set_input_size_bounds(self,min_size:int=288,max_size:int=448)->None:
+        self.__model_min_input_size = min_size
+        self.__model_max_input_size = max_size
 
     def setModelTypeAsYOLOv3(self):
         """
@@ -177,7 +185,8 @@ class DetectionModelTrainer:
 
         self.__model_anchors, self.__inference_anchors = generateAnchors(self.__train_annotations_folder,
                                                                          self.__train_images_folder,
-                                                                         self.__train_cache_file, self.__model_labels)
+                                                                         self.__train_cache_file, self.__model_labels,
+                                                                         size=self.__size)
 
         self.__model_labels = sorted(object_names_array)
         self.__num_objects = len(object_names_array)
@@ -240,7 +249,9 @@ class DetectionModelTrainer:
             max_net_size=self.__model_max_input_size,
             shuffle=True,
             jitter=0.3,
-            norm=normalize
+            norm=normalize,
+            net_w=self.__size,
+            net_h=self.__size
         )
 
         valid_generator = BatchGenerator(
@@ -623,7 +634,7 @@ class CustomObjectDetection:
         self.__model = None
         self.__detection_utils = CustomDetectionUtils(labels=[])
 
-    def set_input_size(self,size):
+    def set_input_size(self,size=416):
         self.__input_size = size
 
     def setModelTypeAsYOLOv3(self):

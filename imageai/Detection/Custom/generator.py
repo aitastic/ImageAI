@@ -17,7 +17,9 @@ class BatchGenerator(Sequence):
         max_net_size=608,    
         shuffle=True, 
         jitter=True, 
-        norm=None
+        norm=None,
+        net_w:int=416,
+        net_h:int=416
     ):
         self.instances          = instances
         self.batch_size         = batch_size
@@ -30,8 +32,8 @@ class BatchGenerator(Sequence):
         self.jitter             = jitter
         self.norm               = norm
         self.anchors            = [BoundBox(0, 0, anchors[2*i], anchors[2*i+1]) for i in range(len(anchors)//2)]
-        self.net_h              = 416  
-        self.net_w              = 416
+        self.net_h              = net_h 
+        self.net_w              = net_w
 
         if shuffle: np.random.shuffle(self.instances)
             

@@ -70,7 +70,7 @@ def run_kmeans(ann_dims, anchor_num):
         old_distances = distances.copy()
 
 
-def generateAnchors(train_annotation_folder, train_image_folder, train_cache_file, model_labels):
+def generateAnchors(train_annotation_folder, train_image_folder, train_cache_file, model_labels, size=416):
 
     print("Generating anchor boxes for training images and annotation...")
     num_anchors = 9
@@ -107,10 +107,10 @@ def generateAnchors(train_annotation_folder, train_image_folder, train_cache_fil
     out_string = ""
     r = "anchors: ["
     for i in sorted_indices:
-        anchor_array.append(int(anchors[i, 0] * 416))
-        anchor_array.append(int(anchors[i, 1] * 416))
+        anchor_array.append(int(anchors[i, 0] * size))
+        anchor_array.append(int(anchors[i, 1] * size))
 
-        out_string += str(int(anchors[i, 0] * 416)) + ',' + str(int(anchors[i, 1] * 416)) + ', '
+        out_string += str(int(anchors[i, 0] * size)) + ',' + str(int(anchors[i, 1] * size)) + ', '
 
     reverse_anchor_array.append(anchor_array[12:18])
     reverse_anchor_array.append(anchor_array[6:12])
