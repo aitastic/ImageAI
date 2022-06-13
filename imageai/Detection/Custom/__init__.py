@@ -407,6 +407,7 @@ class DetectionModelTrainer:
         )
 
         results = list()
+        all_precisions, all_recalls, all_scores = list(),list(),list()
 
         if os.path.isfile(model_path):
             # model_files must be a list containing the complete path to the files,
@@ -430,8 +431,12 @@ class DetectionModelTrainer:
                     #   Run the evaluation
                     ###############################
                     # compute mAP for all the classes
-                    average_precisions, all_precisions, all_recalls, all_scores = evaluate(infer_model, valid_generator, iou_threshold=iou_threshold,
+                    average_precisions, precisions, recalls, scores = evaluate(infer_model, valid_generator, iou_threshold=iou_threshold,
                                                   obj_thresh=object_threshold, nms_thresh=nms_threshold,net_h=img_h,net_w=img_w)
+
+                    all_precisions.append(precisions)
+                    all_recalls.append(recalls)
+                    all_scores.append(scores)
 
                     result_dict = {
                         'model_file': model_file,
